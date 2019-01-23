@@ -28,7 +28,7 @@
     <body>
         <div class="reveal">
             <div class="slides">
-                <section data-background="images/ocean.jpg" data-state="dimbg">
+                <section data-background="images/percolator.jpg" data-state="dimbg">
                     <h2>It's Time for the Populator</h2>
                     <h4>Declarative initialization of kubernetes persistent storage</h4>
                     <p>
@@ -40,6 +40,146 @@
                     </p>
                 </section>
 
+                <section data-background="" data-state="dimbg">
+                  <h2>Kubernetes</h2>
+                  <ul>
+                    <li>The de-facto way to run containers at scale.</li>
+                    <li>It's declarative!</li>
+                    <!--  
+                    <li>Very popular container orchestrator</li>
+                    <li><strong>Declarative API</strong>: Resources define a desired state, Controllers work to achieve it</li>
+                    <li><strong>Pod</strong>: Container group that executes on a node</li>
+                    <li>The first kubernetes workloads were ephemeral</li>
+                    <li>Then, databases needed a place to save their data</li>
+                    <li>The hardest workloads to k8ify have more complex storage requirements</li>
+                    -->
+                  </ul>
+                </section>
+
+                <section data-background="" data-state="dimbg">
+                  <h2>Kubernetes objects</h2>
+                  <p>Add diagram showing Nodes, Pods, PVCs and PVs</p>
+                </section>
+
+                <section data-background="" data-state="dimbg">
+                  <h2>Kubernetes Storage</h2>
+                  <ul>
+                    <li>Self-service!</li>
+                    <li>Storage is dynamically provisioned per user intent</li>
+                    <li>Storage life cycle is distinct from app life cycle</li>
+                    <li>Kubernetes assumes you want an empty volume</li>
+                    <!--
+                    <li>Users request storage with Persistent Volume Claims (PVC)</li>
+                    <li>A provisioner dynamically allocates storage according to the request</li>
+                    <li>Pods use storage by including PVCs in their specification</li>
+                    <li>Newly allocated storage is a fresh, empty filesystem</li>
+                    -->
+                  </ul>
+                </section>
+
+                <section data-background="" data-state="dimbg">
+                  <h2>Reasons to start from somewhere</h2>
+                  <ul>
+                    <li>Initialize your database</li>
+                    <li>Process large data sets</li>
+                    <li>Restore from backup</li>
+                    <li>Mutable persistent data (ie. VM disk)</li>
+                  </ul>
+                </section>
+
+                <section data-background="" data-state="dimbg">
+                    <h2>You can do it today</h2>
+                    <ul>
+                        <li>Use an initContainer in Pods to prepare storage just prior to application startup</li>
+                        <li>Just run a Pod that knows how to prepare the storage any time :)</li>
+                    </ul>
+                </section>
+
+                <section data-background="" data-state="dimbg">
+                    <h2>Initcontainer example</h2>
+                    <pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: fosdemo-pod
+spec:
+  containers:
+  - name: fosdemo-nginix
+    image: nginx
+  initContainers:
+  - name: init-content
+    image: busybox
+    command: ['sh', '-c',
+              'wget -O /usr/share/nginx/html http://fosdem.org']</pre></code>
+                </section>
+
+                <section data-background="" data-state="dimbg">
+                    <h2>Good enough?</h2>
+                    <ul>
+                        <li>Code it yourself
+                            <ul>
+                                <li>Validation and Error handling</li>
+                                <li>Authorization and Security</li>
+                                <li>Logging and monitoring</li>
+                            </ul>
+                        </li>
+                        <li>Manage it yourself
+                            <ul>
+                                <li>Should it run?</li>
+                                <li>Did it run?</li>
+                                <li>Is it done?</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+
+                <section data-background="" data-state="dimbg">
+                    <h2>A Better Approach</h2>
+                    <ul>
+                        <li>Treat volume population like a regular k8s Job</li>
+                        <li>Use a k8s Custom Resource to declare intent</li>
+                        <li>A k8s Controller reconciles to desired state</li>
+                    </ul>
+                </section>
+
+                <section data-background="" data-state="dimbg">
+                    <h2>Diagram</h2>
+                    <ul>
+                    </ul>
+                </section>
+
+                <section data-background="" data-state="dimbg">
+                    <h2>Demo</h2>
+                    <ul>
+                    </ul>
+                </section>
+
+                <section data-background="" data-state="dimbg">
+                    <h2>Todo: Keeping a Promise</h2>
+                    <p>A Pod must not run if it depends on a PVC which has not yet been populated.</p>>
+                </section>
+
+                <section data-background="" data-state="dimbg">
+                    <h2>Taints and Tolerations</h2>
+                    <ul>
+                    </ul>
+                </section>
+
+                <section data-background="" data-state="dimbg">
+                    <h2>Next Steps</h2>
+                    <ul>
+                    </ul>
+                </section>
+
+                <section data-background="" data-state="dimbg">
+                    <h2>Populator Examples</h2>
+                    <ul>
+                    </ul>
+                </section>
+                <section data-background="" data-state="dimbg">
+                    <h2></h2>
+                    <ul>
+                    </ul>
+                </section>
             </div>
         </div>
 

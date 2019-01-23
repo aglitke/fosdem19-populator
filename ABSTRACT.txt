@@ -9,3 +9,67 @@ examples how this can be applied to different sources of data, learn about some
 common problems in this area and how kubernetes can help to solve them.  After
 the session you will be ready to contribute your own populator to the
 kubernetes community.
+
+Outline:
+- Kubernetes 101
+  - Pods execute containers on nodes
+- Workload classes wrt Storage
+  - Stateless (eg. API frontends)
+  - Stateful producers (mongodb)
+  - Stateful consumers (Data processors, virtual machines)
+- Kubernetes Storage 101
+  - Pod/PVC/PV
+  - PVCs start empty - producers can initialize an empty data set
+- How can we initialize the persistent volume?
+  - init container
+  - BYO initializer
+- Init container
+  - example
+  - pros / cons
+    - + Pod won't start until after init container completes
+    - - We might want to decouple the population step from the app init step
+- BYO initializer
+  - example
+  - pros / cons
+  - + Decoupled from application
+  - - Need to manage population before allowing app to run
+- Can we do better?
+  - Population is a common problem.  It would be nice to share
+  - Declarative and managed like any other k8s operation
+  - Integration with provisioning
+- It's time for the Populator
+  - CRD and Controller
+  - CRs define a population request
+  - Users reference the CR in the PVC to request population
+  - Controller acts on the request by spawning a pod which knows how to populate the PV as requested
+- Example: Git Repo Populator
+  - Clones from a given git repo, branch, and tag into a specified directory
+- CRD:
+- CR:
+- Controller:
+  - Watches PVCs with a DataSource of type FromGitRepo
+- PVC:
+  - show example
+- Demo:
+  - nginx deployment of simple web server
+  - Simplified example.  Real world use cases would work with much larger data sets
+    and would involve the application modifying the data in place (ie. DB)
+- Deployment from git branch 'before'
+- Deployment from git branch 'after'
+- ToDo: Orchestration
+  - Consumer pods should not run on with a PVC until population has completed
+- Taints and Tolerations
+  - The PVC carries a 'taint' until population has occurred that prevents pods from starting
+  - The Populator controller creates pods with a toleration so they can bind to the PVC to populate
+- Readiness Gates
+  - Fill in how this will work
+- Outstanding Work
+  - Allow PVC.dataSource to contain arbitrary CRs
+  - Create Populator SDK to make it easy to write new populators and host popular ones
+- Examples of populators
+  - Git
+  - URL importer
+  - Copy data from another PV
+  - Upload!
+  - Restore from backup
+
