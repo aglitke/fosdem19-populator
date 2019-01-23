@@ -138,6 +138,7 @@ spec:
                         <li>Treat volume population like a regular k8s Job</li>
                         <li>Use a k8s Custom Resource to declare intent</li>
                         <li>A k8s Controller reconciles to desired state</li>
+                        <li>Features such as progress reporting and secrets integration</li>
                     </ul>
                 </section>
 
@@ -161,18 +162,31 @@ spec:
                 <section data-background="" data-state="dimbg">
                     <h2>Taints and Tolerations</h2>
                     <ul>
+                        <li>A Taint marks a PVC as not populated</li>
+                        <li>A typical Pod will not run with a tainted PVC</li>
+                        <li>A Toleration on a Pod allows it to populate a PvC</li>
+                        <li>After population the Taint is removed from the PVC</li>
+                        <li>Originally developed to taint cluster Nodes</li>
                     </ul>
                 </section>
 
                 <section data-background="" data-state="dimbg">
                     <h2>Next Steps</h2>
                     <ul>
+                        <li>Allow CRs in PVC DataSource field</li>
+                        <li>PVC Taints and Tolerations</li>
+                        <li>Populator SDK</li>
                     </ul>
                 </section>
 
                 <section data-background="" data-state="dimbg">
                     <h2>Populator Examples</h2>
                     <ul>
+                        <li>Git Repo</li>
+                        <li>HTTP using k8s secrets for authentication</li>
+                        <li>Clone existing PVC</li>
+                        <li>Upload data from client</li>
+                        <li>Restore from backup</li>
                     </ul>
                 </section>
                 <section data-background="" data-state="dimbg">
