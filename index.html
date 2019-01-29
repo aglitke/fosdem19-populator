@@ -44,54 +44,62 @@
                   <h2>Kubernetes</h2>
                   <ul>
                     <li>The de-facto way to run containers at scale.</li>
-                    <li>It's declarative!</li>
-                    <!--  
-                    <li>Very popular container orchestrator</li>
-                    <li><strong>Declarative API</strong>: Resources define a desired state, Controllers work to achieve it</li>
-                    <li><strong>Pod</strong>: Container group that executes on a node</li>
-                    <li>The first kubernetes workloads were ephemeral</li>
-                    <li>Then, databases needed a place to save their data</li>
-                    <li>The hardest workloads to k8ify have more complex storage requirements</li>
-                    -->
+                    <li>Declarative model using the Controller pattern</li>
+                    <li>Extensible using Custom Resources and Controllers</li>
                   </ul>
                 </section>
 
-                <section data-background="" data-state="dimbg">
-                  <h2>Kubernetes objects</h2>
-                  <p>Add diagram showing Nodes, Pods, PVCs and PVs</p>
+                <section>
+                    <h2>Nodes</h2>
+                    <div class="ulist">
+                        <img src="images/node.png" width="30%" style="float: left" class="plain"/>
+                        <ul style="width: 60%">
+                            <li>A Kubernetes worker machine</li>
+                            <li>Have the services necessary to run Pods (container runtime, kubelet and kube-proxy)</li>
+                            <li>Managed by master components</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Pods</h2>
+                    <div class="ulist">
+                        <img src="images/pod.png" width="30%" style="float: left" class="plain"/>
+                        <ul style="width: 60%">
+                            <li>One or more containers</li>
+                            <li>Run together on a Node</li>
+                            <li>Shared storage and networking</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Storage Resources</h2>
+                    <div class="ulist">
+                        <img src="images/pvc.png" width="30%" style="float: left" class="plain"/>
+                        <ul style="width: 60%">
+                            <li><strong>Persistent Volume:</strong> a piece of provisioned storage of a certain type</li>
+                            <li><strong>Persistent Volume Claim:</strong> a request for a piece of storage</li>
+                        </ul>
+                    </div>
                 </section>
 
                 <section data-background="" data-state="dimbg">
-                  <h2>Kubernetes Storage</h2>
+                  <h2>Why do we need PVC Initialization?</h2>
                   <ul>
-                    <li>Self-service!</li>
-                    <li>Storage is dynamically provisioned per user intent</li>
-                    <li>Storage life cycle is distinct from app life cycle</li>
-                    <li>Kubernetes assumes you want an empty volume</li>
-                    <!--
-                    <li>Users request storage with Persistent Volume Claims (PVC)</li>
-                    <li>A provisioner dynamically allocates storage according to the request</li>
-                    <li>Pods use storage by including PVCs in their specification</li>
-                    <li>Newly allocated storage is a fresh, empty filesystem</li>
-                    -->
-                  </ul>
-                </section>
-
-                <section data-background="" data-state="dimbg">
-                  <h2>Reasons to start from somewhere</h2>
-                  <ul>
-                    <li>Initialize your database</li>
-                    <li>Process large data sets</li>
+                    <li>Clone your database</li>
+                    <li>Big data processing</li>
                     <li>Restore from backup</li>
                     <li>Mutable persistent data (ie. VM disk)</li>
                   </ul>
                 </section>
 
                 <section data-background="" data-state="dimbg">
-                    <h2>You can do it today</h2>
+                    <h2>Current options</h2>
                     <ul>
-                        <li>Use an initContainer in Pods to prepare storage just prior to application startup</li>
-                        <li>Just run a Pod that knows how to prepare the storage any time :)</li>
+                        <li>`kubectl cp` into a running container</li>
+                        <li>Run a special Pod first to prepare PVC</li>
+                        <li>Use an initContainer in your application Pod</li>
                     </ul>
                 </section>
 
@@ -113,20 +121,20 @@ spec:
                 </section>
 
                 <section data-background="" data-state="dimbg">
-                    <h2>Good enough?</h2>
+                    <h2>Is it good enough?</h2>
                     <ul>
-                        <li>Code it yourself
+                        <li>You will want more features
                             <ul>
-                                <li>Validation and Error handling</li>
+                                <li>Error handling</li>
                                 <li>Authorization and Security</li>
                                 <li>Logging and monitoring</li>
                             </ul>
                         </li>
-                        <li>Manage it yourself
+                        <li>You need to manage it
                             <ul>
-                                <li>Should it run?</li>
-                                <li>Did it run?</li>
-                                <li>Is it done?</li>
+                                <li>Ordering</li>
+                                <li>ReplicaSets and auto-scaling</li>
+                                <li>Error handling</li>
                             </ul>
                         </li>
                     </ul>
@@ -135,16 +143,11 @@ spec:
                 <section data-background="" data-state="dimbg">
                     <h2>A Better Approach</h2>
                     <ul>
-                        <li>Treat volume population like a regular k8s Job</li>
-                        <li>Use a k8s Custom Resource to declare intent</li>
-                        <li>A k8s Controller reconciles to desired state</li>
-                        <li>Features such as progress reporting and secrets integration</li>
-                    </ul>
-                </section>
-
-                <section data-background="" data-state="dimbg">
-                    <h2>Diagram</h2>
-                    <ul>
+                        <li>Declarative, the kubernetes way</li>>
+                        <li>A Custom Resource describes a population strategy</li>
+                        <li>PVC references Custom Resource</li>
+                        <li>A Populator Controller manages the process</li>
+                        <li>Can be used to collaborate on many populators</li>
                     </ul>
                 </section>
 
@@ -155,18 +158,20 @@ spec:
                 </section>
 
                 <section data-background="" data-state="dimbg">
-                    <h2>Todo: Keeping a Promise</h2>
-                    <p>A Pod must not run if it depends on a PVC which has not yet been populated.</p>>
+                    <h2>Declarative Population</h2>
+                    <p>If you request a populated PVC, kubernetes will not make that PVC available 
+                        to Pods until it has been populated.</p>
                 </section>
 
                 <section data-background="" data-state="dimbg">
                     <h2>Taints and Tolerations</h2>
                     <ul>
-                        <li>A Taint marks a PVC as not populated</li>
-                        <li>A typical Pod will not run with a tainted PVC</li>
-                        <li>A Toleration on a Pod allows it to populate a PvC</li>
-                        <li>After population the Taint is removed from the PVC</li>
-                        <li>Originally developed to taint cluster Nodes</li>
+                        <li>Reuse existing Kubernetes pattern</li>
+                        <li>New PVCs with a DataSource defined receive a Taint</li>
+                        <li>Signifies the PVC has not been populated yet</li>
+                        <li>Regular Pods will not schedule while a PVC is tainted</li>
+                        <li>Populator pods will express a Toleration and may run</li>
+                        <li>Populator Controller removes the Taint on success</li>
                     </ul>
                 </section>
 
@@ -190,8 +195,10 @@ spec:
                     </ul>
                 </section>
                 <section data-background="" data-state="dimbg">
-                    <h2></h2>
+                    <h2>Thank you!</h2>
                     <ul>
+                        <li>Check out github.com/kubevirt/containerized-data-importer</li>
+                        
                     </ul>
                 </section>
             </div>
