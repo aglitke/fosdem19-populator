@@ -78,7 +78,7 @@
                     <div class="ulist">
                         <img src="images/pvc.png" width="30%" style="float: left" class="plain"/>
                         <ul style="width: 60%">
-                            <li><strong>Persistent Volume:</strong> a piece of provisioned storage of a certain type</li>
+                            <li><strong>Persistent Volume:</strong> a piece of provisioned storage with a type</li>
                             <li><strong>Persistent Volume Claim:</strong> a request for a piece of storage</li>
                         </ul>
                     </div>
@@ -170,7 +170,7 @@ spec:
                         <li>New PVCs with a DataSource defined receive a Taint</li>
                         <li>Signifies the PVC has not been populated yet</li>
                         <li>Regular Pods will not schedule while a PVC is tainted</li>
-                        <li>Populator pods will express a Toleration and may run</li>
+                        <li>Populator pods express a Toleration and may run</li>
                         <li>Populator Controller removes the Taint on success</li>
                     </ul>
                 </section>
@@ -197,7 +197,8 @@ spec:
                 <section data-background="" data-state="dimbg">
                     <h2>Thank you!</h2>
                     <ul>
-                        <li>Check out github.com/kubevirt/containerized-data-importer</li>
+                      <li>Check out:<br/>
+                        github.com/kubevirt/containerized-data-importer</li>
                     </ul>
                 </section>
             </div>
